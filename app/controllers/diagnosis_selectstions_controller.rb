@@ -1,2 +1,0 @@
-class DiagnosisSelectstionsController < ApplicationController
-end
