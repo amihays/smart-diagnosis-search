@@ -1,1 +1,1 @@
-json.partial! 'diagnosis', collection: @diagnoses, as: :diagnosis
+json.names @diagnoses

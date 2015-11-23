@@ -5,11 +5,11 @@
   var ALL_DIAGNOSES_CHANGE_EVENT = "allDiagnosesChange";
 
   var resetAllDiagnoses = function (allDiagnoses) {
-    _allDiagnoses = allDiagnoses;
+    _allDiagnoses = allDiagnoses.names;
   };
 
   var resetTopDiagnoses = function (topDiagnoses) {
-    _topDiagnoses = topDiagnoses;
+    _topDiagnoses = topDiagnoses.names;
   };
 
   root.DiagnosisStore = $.extend({}, EventEmitter.prototype, {

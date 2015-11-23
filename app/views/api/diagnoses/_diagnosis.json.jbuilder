@@ -1,1 +1,1 @@
-json.extract! diagnosis, :id, :name
+# json.extract! diagnosis, :id, :name

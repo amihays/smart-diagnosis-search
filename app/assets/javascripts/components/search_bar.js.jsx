@@ -1,6 +1,6 @@
 const COMMON_ABBREVS = {
   flu: "influenza"
-}
+};
 
 window.SearchBar = React.createClass({
   getInitialState: function () {
@@ -20,70 +20,85 @@ window.SearchBar = React.createClass({
 
   _onDiagnosesChange: function () {
     var topDiagnoses = DiagnosisStore.top();
-    console.log(topDiagnoses);
     var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses);
-    console.log(diagnoses);
     this.setState({suggestedDiagnoses: diagnoses});
   },
-  //
-  // _onAllDiagnosesChange: function () {
-  //   var topDiagnoses = DiagnosisStore.top();
-  //   var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses);
-  //   this.setState({suggestedDiagnoses: diagnoses});
-  // },
 
   _handleQueryChange: function (e) {
     this.setState({query: e.target.value}, this._fetchTopDiagnoses);
   },
 
   _fetchTopDiagnoses: function () {
-    ApiUtil.fetchTopDiagnoses({query: this.state.query});
+    ApiUtil.fetchTopDiagnoses({query: this.state.query, limit: 10});
   },
 
   _calculateSuggestedDiagnoses: function (topDiagnoses) {
-    if (topDiagnoses.length > 0) {
-      return topDiagnoses;
-    } else {
-      return topDiagnoses.concat(this._relevantDiagnoses(5 - topDiagnoses.length));
-    }
+    return topDiagnoses.concat(this._relevantDiagnoses(10 - topDiagnoses.length));
   },
 
   _relevantDiagnoses: function (count) {
     var allDiagnoses = DiagnosisStore.all();
-    var relevanceScores = this._computeRelevance(allDiagnoses);
+    // var relevanceScores = this._computeRelevance(allDiagnoses);
     var numSearchWords = this.state.query.split(/[ -]/).length;
-    return allDiagnoses.slice(0,5);
+    // console.log(relevanceScores);
+    var resultCounts = [];
+    allDiagnoses.forEach(function(diagnosis) {
+      var searchRelevance = this._searchRelevance(diagnosis);
+      // console.log(diagnosis, searchRelevance);
+      if (searchRelevance >= numSearchWords) {
+        var added = false;
+        for (var i = 0; i < resultCounts.length; i++) {
+          if (resultCounts[i][1] < searchRelevance) {
+            resultCounts.splice(i, 0, [diagnosis, searchRelevance]);
+            added = true;
+            break;
+          }
+        }
+        if (!added && resultCounts.length < count && searchRelevance >= numSearchWords) {
+          resultCounts.push([diagnosis, searchRelevance]);
+        } else if (resultCounts.length > count) {
+          resultCounts = resultCounts.slice(0, count)
+        }
+      }
+    }.bind(this));
+    return resultCounts.map(function(result) { return result[0]; });
   },
+  //
+  // _computeRelevance: function (diagnoses) {
+  //   var relevanceScores = {};
+  //   diagnoses.forEach(function (diagnosis) {
+  //     var relevance = this._searchRelevance(diagnosis);
+  //     relevanceScores[diagnosis] = relevance;
+  //   }.bind(this))
+  //   return relevanceScores;
+  // },
 
-  _computeRelevance: function (diagnoses) {
-    var relevanceScores = {};
-    diagnoses.forEach(function (diagnosis) {
-      var relevance = this._searchRelevance(diagnosis);
-      relevanceScores[diagnosis] = relevance;
-    }.bind(this))
-    return relevanceScores;
-  },
-
-  _searchRelevance: function (diagnosis, search) {
+  _searchRelevance: function (diagnosis) {
     var searchWords = this.state.query.split(/[ -]/);
     var sum = 0;
     searchWords.forEach(function(word) {
       sum += this._wordRelevance(diagnosis, word);
     }.bind(this))
+    return sum;
   },
 
   _wordRelevance: function (diagnosis, word) {
-    var wordRegex = new RegExp('^' + word);
+    if (word === "") {
+      return 0;
+    }
+    var wordRegex = new RegExp('^' + word.toLowerCase());
     var abbrevRegex = COMMON_ABBREVS[word] ? new RegExp('^' + COMMON_ABBREVS[word]) : null;
-    diagnosis.name.split(/[ -]/).forEach(function(searchWord) {
-      if (abbrevRegex && searchWord.match(abbrevRegex)) {
-        return 1.01;
-      } else if (searchWord.match(wordRegex)) {
-        return 1;
+    var wordRelevance = 0;
+    diagnosis.split(/[ -]/).forEach(function(diagnosisWord) {
+      if (abbrevRegex && diagnosisWord.toLowerCase().match(abbrevRegex)) {
+        wordRelevance += 1.01;
+      } else if (diagnosisWord.toLowerCase().match(wordRegex)) {
+        wordRelevance += 1;
       } else {
-        return 0;
+        wordRelevance += 0;
       }
-    })
+    });
+    return wordRelevance;
   },
 
   render: function () {

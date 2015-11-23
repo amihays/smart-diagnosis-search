@@ -5,9 +5,9 @@ window.Dropdown = React.createClass({
         {
           this.props.diagnoses.map(function(diagnosis){
             return(
-              <div key={diagnosis.id}>{diagnosis.name}</div>
+              <div key={this.props.diagnoses.indexOf(diagnosis)}>{diagnosis}</div>
             )
-          })
+          }.bind(this))
         }
       </div>
     )
