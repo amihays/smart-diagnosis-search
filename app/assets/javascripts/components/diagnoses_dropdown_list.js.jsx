@@ -5,7 +5,7 @@ window.DiagnosesDropdownList = React.createClass({
         {
           this.props.diagnoses.map(function(diagnosis){
             return(
-              <DiagnosesDropdownListItem diagnosisClickHandler={this.props.diagnosisClickHandler}
+              <DiagnosesDropdownListItem handleDiagnosisClick={this.props.handleDiagnosisClick}
                                          diagnosis={diagnosis}
                                          key={diagnosis[1]}/>
             )

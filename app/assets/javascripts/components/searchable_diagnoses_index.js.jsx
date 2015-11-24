@@ -76,11 +76,12 @@ window.SearchableDiagnosesIndex = React.createClass({
     return regExpString;
   },
 
-  diagnosisClickHandler: function (e) {
+  handleDiagnosisClick: function (e) {
     ApiUtil.createQuery({diagnosis_name: e.target.textContent, text: this.state.query}, this.resetState);
   },
 
   resetState: function () {
+    console.log('success');
     this.setState({query: "", diagnosesDropdownList: [], diagnosesList: []});
   },
 
@@ -90,8 +91,10 @@ window.SearchableDiagnosesIndex = React.createClass({
         <Search query={this.state.query}
                 handleKeyDown={this.handleKeyDown}
                 handleQueryChange={this.handleQueryChange}
-                diagnosesDropdownList={this.state.diagnosesDropdownList}/>
-        <DiagnosesList diagnosesList={this.state.diagnosesList}/>
+                diagnosesDropdownList={this.state.diagnosesDropdownList}
+                handleDiagnosisClick={this.handleDiagnosisClick}/>
+        <DiagnosesList handleDiagnosisClick={this.handleDiagnosisClick}
+                       diagnosesList={this.state.diagnosesList}/>
       </div>
     );
   }

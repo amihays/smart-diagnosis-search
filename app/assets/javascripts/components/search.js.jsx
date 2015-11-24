@@ -5,7 +5,8 @@ window.Search = React.createClass({
         <SearchBar query={this.props.query}
                    handleQueryChange={this.props.handleQueryChange}
                    handleKeyDown={this.props.handleKeyDown}/>
-        <DiagnosesDropdownList diagnoses={this.props.diagnosesDropdownList}/>
+        <DiagnosesDropdownList diagnoses={this.props.diagnosesDropdownList}
+                               handleDiagnosisClick={this.props.handleDiagnosisClick}/>
       </div>
     )
   }
