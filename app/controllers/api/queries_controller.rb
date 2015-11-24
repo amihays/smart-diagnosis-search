@@ -1,11 +1,19 @@
 class Api::QueriesController < ApplicationController
   def create
-    @query = Query.new(query_params) # how to create both diagnosis_selection & query at once?
-    if @query.save
-      render :show
-    else
-      render json: @query.errors.full_messages, status: 422
+    name = params[:query][:diagnosis_name]
+    diagnosis = Diagnosis.find_by(name: name)
+    query = Query.find_by(text: params[:query][:text])
+    begin
+      if query
+        @query = query
+        diagnosisSelection = DiagnosisSelection.create({query_id: query.id, diagnosis_id: diagnosis.id})
+      else
+        @query = diagnosis.queries.create(query_params)
+      end
+    rescue Exception => e
+      render json: "failed create diagnosisSelection", status: 422
     end
+    render :show unless e
   end
 
   def index
@@ -14,6 +22,6 @@ class Api::QueriesController < ApplicationController
 
   private
   def query_params
-    params.require(:query).permit(:name, :diagnosis_id)
+    params.require(:query).permit(:text)
   end
 end

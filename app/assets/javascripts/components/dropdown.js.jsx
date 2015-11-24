@@ -5,7 +5,9 @@ window.Dropdown = React.createClass({
         {
           this.props.diagnoses.map(function(diagnosis){
             return(
-              <div key={this.props.diagnoses.indexOf(diagnosis)}>{diagnosis}</div>
+              <div onClick={this.props.diagnosisClickHandler}
+                   name={diagnosis}
+                   key={this.props.diagnoses.indexOf(diagnosis)}>{diagnosis}</div>
             )
           }.bind(this))
         }
