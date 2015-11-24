@@ -1,9 +1,9 @@
 class Api::DiagnosesController < ApplicationController
   def index
     if params[:limit]
-      @diagnoses = Diagnosis.most_selected(params[:query]).map { |diagnosis| diagnosis.name }
+      @diagnoses = Diagnosis.most_selected(params[:query]).map { |diagnosis| [diagnosis.name, diagnosis.id] }
     else
-      @diagnoses = Diagnosis.all.map { |diagnosis| diagnosis.name }
+      @diagnoses = Diagnosis.all.map { |diagnosis| [diagnosis.name, diagnosis.id] }
     end
   end
 end

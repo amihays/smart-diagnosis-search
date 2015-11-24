@@ -1,1 +1,1 @@
-json.names @diagnoses
+json.diagnoses @diagnoses

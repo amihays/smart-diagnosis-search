@@ -21,13 +21,13 @@ window.ApiUtil = {
     })
   },
 
-  createQuery: function (params) {
+  createQuery: function (params, callback) {
     $.ajax({
       url: "api/queries",
       type: "post",
       data: {query: params},
       success: function () {
-        console.log(arguments);
+        callback();
       }
     })
   }

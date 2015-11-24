@@ -7,6 +7,7 @@ window.Routes = function () {
   React.render((
     <Router>
       <Route path="/" component={App}>
+        <IndexRoute component={SearchableDiagnosesIndex}/>
       </Route>
     </Router>
   ), root)
