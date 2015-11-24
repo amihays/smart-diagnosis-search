@@ -16,7 +16,7 @@ class Diagnosis < ActiveRecord::Base
 
   def self.most_selected(query)
     Diagnosis.joins(diagnosis_selections: :query)
-             .where("queries.text LIKE ?", query + "%")
+             .where("queries.text LIKE ?", query.strip + "%")
              .group("diagnoses.id")
              .order("count(*) desc")
              .limit(5)
