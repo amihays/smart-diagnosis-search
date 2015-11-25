@@ -87,11 +87,27 @@ window.SearchableDiagnosesIndex = React.createClass({
 
   _regExpString: function () {
     var regExpString = "";
-    this.state.query.split(/[ -]/).forEach(function(searchWord) {
+    var queryWords = this.state.query.split(/[ -]/);
+    queryWords.forEach(function(searchWord, idx) {
       var lowerCaseWord = searchWord.toLowerCase();
-      regExpString += "(?=.*\\b" + this.escapeRegExp(lowerCaseWord) + "|.*\\s" + this.escapeRegExp(lowerCaseWord);
-      if (COMMON_ABBREVS[lowerCaseWord]) {
-        regExpString += "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]);
+      if (idx === queryWords.length - 1) {
+        regExpString += "(?=.*\\b" + this.escapeRegExp(lowerCaseWord)
+                      + "|.*\\s" + this.escapeRegExp(lowerCaseWord);
+        if (COMMON_ABBREVS[lowerCaseWord]) {
+          regExpString += "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord])
+                        + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]);
+        }
+      } else {
+        regExpString += "(?=.*\\b" + this.escapeRegExp(lowerCaseWord) + "\\b"
+                      + "|.*\\s" + this.escapeRegExp(lowerCaseWord) + "\\b"
+                      + "|.*\\b" + this.escapeRegExp(lowerCaseWord) + "\\s"
+                      + "|.*\\s" + this.escapeRegExp(lowerCaseWord) + "\\s";
+        if (COMMON_ABBREVS[lowerCaseWord]) {
+          regExpString += "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\b"
+                        + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\b"
+                        + "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\s"
+                        + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\s";
+        }
       }
       regExpString += ")";
     }.bind(this));
