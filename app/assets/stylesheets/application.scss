@@ -17,7 +17,8 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
-body {
+body
+{
   color: #776e7c;
   font-family: Avenir;
   letter-spacing: 1px;
@@ -50,6 +51,32 @@ span.glyphicon.glyphicon-search,
   box-sizing: border-box;
 }
 
+#LIGHT-BLUE-BACKGROUND,
+.search-bar-input,
+.search-bar,
+.light-blue-background,
+.diagnoses-dropdown-list
+{
+  background-color: #e8eef5;
+}
+
+#MEDIUM-BLUE,
+.diagnoses-list-item:hover,
+.diagnoses-dropdown-list-item:hover,
+.medium-blue
+{
+  background: #D5DFEA;
+}
+
+#POINTER-CURSOR,
+.diagnoses-dropdown-list:hover,
+.diagnoses-list:hover,
+span.glyphicon.glyphicon-search:hover,
+.pointer-cursor
+{
+  cursor: pointer;
+}
+
 .search
 {
   width: 600px;
@@ -66,7 +93,6 @@ span.glyphicon.glyphicon-search,
   font-size: 14px;
   border: 0px;
   border-radius: 4px;
-  background-color: inherit;
 }
 
 .search-bar
@@ -75,7 +101,6 @@ span.glyphicon.glyphicon-search,
   width: 300px;
   border-radius: 4px;
   border: 1px solid #776e7c;
-  background-color: #e8eef5;
 }
 
 span.glyphicon.glyphicon-search
@@ -86,11 +111,6 @@ span.glyphicon.glyphicon-search
   font-size: 14px;
 }
 
-span.glyphicon.glyphicon-search:hover
-{
-  cursor: pointer;
-}
-
 .diagnoses-dropdown-list
 {
   width: 300px;
@@ -98,7 +118,6 @@ span.glyphicon.glyphicon-search:hover
   border: 0px 1px 1px 1px;
   border-color: #776e7c;
   border-radius: 4px;
-  background-color: #e8eef5;
 }
 
 .diagnoses-list
@@ -116,12 +135,6 @@ span.glyphicon.glyphicon-search:hover
   padding: 5px;
 }
 
-.diagnoses-list-item:hover
-{
-  cursor: pointer;
-  background: #D5DFEA;
-}
-
 .diagnoses-dropdown-list-item
 {
   width: 100%;
@@ -130,20 +143,10 @@ span.glyphicon.glyphicon-search:hover
   border-top: 0px;
 }
 
-.diagnoses-dropdown-list:hover
-{
-  cursor: pointer;
-}
-
-.diagnoses-dropdown-list-item:hover
-{
-  background: #D5DFEA;
-}
-
 .flash-notification-list
 {
   padding: 0px;
-  list-style:none;
+  list-style: none;
   position: absolute;
   top: 30px;
   font-size: 16px;
