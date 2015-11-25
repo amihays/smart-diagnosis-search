@@ -88,30 +88,34 @@ window.SearchableDiagnosesIndex = React.createClass({
   _regExpString: function () {
     var regExpString = "";
     var queryWords = this.state.query.split(/[ -]/);
+    if (queryWords[queryWords.length - 1] === "") {
+      queryWords.splice(queryWords.length - 1, 1);
+    }
     queryWords.forEach(function(searchWord, idx) {
       var lowerCaseWord = searchWord.toLowerCase();
       if (idx === queryWords.length - 1) {
-        regExpString += "(?=.*\\b" + this.escapeRegExp(lowerCaseWord)
-                      + "|.*\\s" + this.escapeRegExp(lowerCaseWord);
-        if (COMMON_ABBREVS[lowerCaseWord]) {
-          regExpString += "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord])
-                        + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]);
-        }
+        regExpString += this._beginningWordRegExpString(lowerCaseWord);
       } else {
-        regExpString += "(?=.*\\b" + this.escapeRegExp(lowerCaseWord) + "\\b"
-                      + "|.*\\s" + this.escapeRegExp(lowerCaseWord) + "\\b"
-                      + "|.*\\b" + this.escapeRegExp(lowerCaseWord) + "\\s"
-                      + "|.*\\s" + this.escapeRegExp(lowerCaseWord) + "\\s";
-        if (COMMON_ABBREVS[lowerCaseWord]) {
-          regExpString += "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\b"
-                        + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\b"
-                        + "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\s"
-                        + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "\\s";
-        }
+        regExpString += this._fullWordRegExpString(lowerCaseWord);
       }
-      regExpString += ")";
     }.bind(this));
     return regExpString;
+  },
+
+  _fullWordRegExpString: function (word) {
+    wordRegExpString = "(?=.*(\\b|\\s|^)" + this.escapeRegExp(word) + "(\\b|\\s|$)";
+    if (COMMON_ABBREVS[word]) {
+      wordRegExpString += "|.*(\\b|\\s|^)" + this.escapeRegExp(COMMON_ABBREVS[word]) + "(\\b|\\s|$)";
+    }
+    return wordRegExpString + ")";
+  },
+
+  _beginningWordRegExpString: function (word) {
+    wordRegExpString = "(?=.*(\\b|\\s|^)" + this.escapeRegExp(word);
+    if (COMMON_ABBREVS[word]) {
+      wordRegExpString += "|.*(\\b|\\s|^)" + this.escapeRegExp(COMMON_ABBREVS[word]);
+    }
+    return wordRegExpString + ")";
   },
 
   escapeRegExp: function (str) {
