@@ -69,7 +69,10 @@ window.SearchableDiagnosesIndex = React.createClass({
   _relevantDiagnoses: function (count, topDiagnoses) {
     var searchRegExp = new RegExp(this._regExpString(), "i");
     var results = [];
-    DiagnosisStore.all().forEach(function(diagnosis) {
+    var idx = 0;
+    var diagnoses = DiagnosisStore.all();
+    while (results.length < count && idx < diagnoses.length) {
+      var diagnosis = diagnoses[idx];
       if (diagnosis[0].search(searchRegExp) >= 0) {
         var found = false;
         for (i = 0; i < topDiagnoses.length; i++) {
@@ -81,8 +84,9 @@ window.SearchableDiagnosesIndex = React.createClass({
           results.push(diagnosis);
         }
       }
-    }.bind(this));
-    return results.slice(0, count);
+      idx += 1;
+    }
+    return results;
   },
 
   _regExpString: function () {
