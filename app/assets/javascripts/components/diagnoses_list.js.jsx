@@ -1,7 +1,7 @@
 window.DiagnosesList = React.createClass({
   render: function () {
     return(
-      <div>
+      <div className="diagnoses-list">
         {
           this.props.diagnosesList.map(function(diagnosis){
             return(

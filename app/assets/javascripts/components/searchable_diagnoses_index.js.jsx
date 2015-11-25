@@ -1,3 +1,10 @@
+const COMMON_ABBREVS = {
+  flu: "influenza",
+  broke: "frature",
+  broken: "fracture",
+  cns: "central nervous system"
+};
+
 window.SearchableDiagnosesIndex = React.createClass({
   getInitialState: function () {
     return {query: "", diagnosesList: [], diagnosesDropdownList: []};
@@ -16,20 +23,24 @@ window.SearchableDiagnosesIndex = React.createClass({
 
   _onDiagnosesChange: function () {
     var topDiagnoses = DiagnosisStore.top();
-    var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 10);
+    var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 7);
     this.setState({diagnosesDropdownList: diagnoses});
   },
 
   handleQueryChange: function (e) {
-    this.setState({query: e.target.value}, this._fetchTopDiagnoses.bind(null, 10));
+    this.setState({query: e.target.value}, this._fetchTopDiagnoses.bind(null, 7));
   },
 
   handleKeyDown: function (e) {
     if (e.key === "Enter") {
-      var topDiagnoses = DiagnosisStore.top();
-      var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 100)
-      this.setState({diagnosesDropdownList: [], diagnosesList: diagnoses})
+      this.handleSubmit();
     }
+  },
+
+  handleSubmit: function () {
+      var topDiagnoses = DiagnosisStore.top();
+      var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 100);
+      this.setState({diagnosesDropdownList: [], diagnosesList: diagnoses});
   },
 
   _fetchTopDiagnoses: function (count) {
@@ -89,6 +100,7 @@ window.SearchableDiagnosesIndex = React.createClass({
     return (
       <div>
         <Search query={this.state.query}
+                handleSubmit={this.handleSubmit}
                 handleKeyDown={this.handleKeyDown}
                 handleQueryChange={this.handleQueryChange}
                 diagnosesDropdownList={this.state.diagnosesDropdownList}

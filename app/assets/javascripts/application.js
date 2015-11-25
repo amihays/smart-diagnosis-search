@@ -17,4 +17,5 @@
 //= require react
 //= require react_ujs
 //= require reactrouter.min.js
+//= require bootstrap-sprockets
 //= require_tree .
