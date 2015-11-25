@@ -89,13 +89,17 @@ window.SearchableDiagnosesIndex = React.createClass({
     var regExpString = "";
     this.state.query.split(/[ -]/).forEach(function(searchWord) {
       var lowerCaseWord = searchWord.toLowerCase();
-      regExpString += "(?=.* " + lowerCaseWord + "|^" + lowerCaseWord;
+      regExpString += "(?=.*\\b" + this.escapeRegExp(lowerCaseWord) + "|.*\\s" + this.escapeRegExp(lowerCaseWord);
       if (COMMON_ABBREVS[lowerCaseWord]) {
-        regExpString += "|.* " + COMMON_ABBREVS[lowerCaseWord] + "|^" + COMMON_ABBREVS[lowerCaseWord];
+        regExpString += "|.*\\b" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]) + "|.*\\s" + this.escapeRegExp(COMMON_ABBREVS[lowerCaseWord]);
       }
       regExpString += ")";
-    });
+    }.bind(this));
     return regExpString;
+  },
+
+  escapeRegExp: function (str) {
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
   },
 
   render: function () {
