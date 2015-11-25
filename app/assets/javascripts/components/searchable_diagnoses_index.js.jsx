@@ -7,7 +7,7 @@ const COMMON_ABBREVS = {
 
 window.SearchableDiagnosesIndex = React.createClass({
   getInitialState: function () {
-    return {query: "", diagnosesList: [], diagnosesDropdownList: []};
+    return {query: "", diagnosesList: [], diagnosesDropdownList: [], notifications: []};
   },
 
   componentDidMount: function () {
@@ -38,13 +38,24 @@ window.SearchableDiagnosesIndex = React.createClass({
   },
 
   handleSubmit: function () {
-      var topDiagnoses = DiagnosisStore.top();
-      var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 100);
-      this.setState({diagnosesDropdownList: [], diagnosesList: diagnoses});
+    var topDiagnoses = DiagnosisStore.top();
+    var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 100);
+    this.setState({diagnosesDropdownList: [], diagnosesList: diagnoses});
   },
 
   _fetchTopDiagnoses: function (count) {
     ApiUtil.fetchTopDiagnoses({query: this.state.query, limit: count});
+  },
+
+  handleDiagnosisClick: function (e) {
+    ApiUtil.createQuery({diagnosis_name: e.target.textContent, text: this.state.query}, this.resetState);
+  },
+
+  resetState: function () {
+    this.setState({query: "", diagnosesDropdownList: [], diagnosesList: [], notifications: ["diagnosis submission successful"]});
+    window.setTimeout(function() {
+      this.setState({notifications: []});
+    }.bind(this), 2000)
   },
 
   _calculateSuggestedDiagnoses: function (topDiagnoses, count) {
@@ -87,18 +98,10 @@ window.SearchableDiagnosesIndex = React.createClass({
     return regExpString;
   },
 
-  handleDiagnosisClick: function (e) {
-    ApiUtil.createQuery({diagnosis_name: e.target.textContent, text: this.state.query}, this.resetState);
-  },
-
-  resetState: function () {
-    console.log('success');
-    this.setState({query: "", diagnosesDropdownList: [], diagnosesList: []});
-  },
-
   render: function () {
     return (
       <div>
+        <FlashNotificationList notifications={this.state.notifications}/>
         <Search query={this.state.query}
                 handleSubmit={this.handleSubmit}
                 handleKeyDown={this.handleKeyDown}

@@ -7,7 +7,7 @@ window.SearchBar = React.createClass({
                value={this.props.query}
                onChange={this.props.handleQueryChange}
                onKeyDown={this.props.handleKeyDown}
-               placeholder='search diagnoses'/>
+               placeholder='Search Diagnoses'/>
         <span onClick={this.props.handleSubmit}
               className="glyphicon glyphicon-search"/>
       </div>

@@ -30,7 +30,8 @@ body {
 .search-bar,
 .diagnoses-dropdown-list,
 .diagnoses-list,
-.center-x
+.center-x,
+.flash-notification-list
 {
   position: absolute;
   left: 50%;
@@ -59,6 +60,7 @@ span.glyphicon.glyphicon-search,
 .search-bar-input
 {
   height: 100%;
+  padding-left: 5px;
   width: 280px;
   outline: none;
   font-size: 14px;
@@ -136,4 +138,13 @@ span.glyphicon.glyphicon-search:hover
 .diagnoses-dropdown-list-item:hover
 {
   background: #D5DFEA;
+}
+
+.flash-notification-list
+{
+  padding: 0px;
+  list-style:none;
+  position: absolute;
+  top: 30px;
+  font-size: 16px;
 }
