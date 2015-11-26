@@ -11,24 +11,24 @@ window.SearchableDiagnosesIndex = React.createClass({
   },
 
   componentDidMount: function () {
-    DiagnosisStore.addTopChangeListener(this._onDiagnosesChange);
-    DiagnosisStore.addAllChangeListener(this._onDiagnosesChange);
+    DiagnosisStore.addTopChangeListener(this.onDiagnosesChange);
+    DiagnosisStore.addAllChangeListener(this.onDiagnosesChange);
     ApiUtil.fetchAllDiagnoses({query: this.state.query});
   },
 
   componentWillUnmount: function () {
-    DiagnosisStore.removeTopChangeListener(this._onDiagnosesChange);
-    DiagnosisStore.removeAllChangeListener(this._onDiagnosesChange);
+    DiagnosisStore.removeTopChangeListener(this.onDiagnosesChange);
+    DiagnosisStore.removeAllChangeListener(this.onDiagnosesChange);
   },
 
-  _onDiagnosesChange: function () {
+  onDiagnosesChange: function () {
     var topDiagnoses = DiagnosisStore.top();
-    var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 7);
+    var diagnoses = this.calculateSuggestedDiagnoses(topDiagnoses, 7);
     this.setState({diagnosesDropdownList: diagnoses});
   },
 
   handleQueryChange: function (e) {
-    this.setState({query: e.target.value}, this._fetchTopDiagnoses.bind(null, 7));
+    this.setState({query: e.target.value}, this.fetchTopDiagnoses.bind(null, 7));
   },
 
   handleKeyDown: function (e) {
@@ -39,11 +39,11 @@ window.SearchableDiagnosesIndex = React.createClass({
 
   handleSubmit: function () {
     var topDiagnoses = DiagnosisStore.top();
-    var diagnoses = this._calculateSuggestedDiagnoses(topDiagnoses, 100);
+    var diagnoses = this.calculateSuggestedDiagnoses(topDiagnoses, 100);
     this.setState({diagnosesDropdownList: [], diagnosesList: diagnoses});
   },
 
-  _fetchTopDiagnoses: function (count) {
+  fetchTopDiagnoses: function (count) {
     ApiUtil.fetchTopDiagnoses({query: this.state.query, limit: count});
   },
 
@@ -58,38 +58,40 @@ window.SearchableDiagnosesIndex = React.createClass({
     }.bind(this), 2000)
   },
 
-  _calculateSuggestedDiagnoses: function (topDiagnoses, count) {
+  calculateSuggestedDiagnoses: function (topDiagnoses, count) {
     if (this.state.query === "") {
       return [];
     } else {
-      return topDiagnoses.concat(this._relevantDiagnoses(count - topDiagnoses.length, topDiagnoses));
+      return topDiagnoses.concat(this.relevantDiagnoses(count - topDiagnoses.length, topDiagnoses));
     }
   },
 
-  _relevantDiagnoses: function (count, topDiagnoses) {
-    var searchRegExp = new RegExp(this._regExpString(), "i");
+  relevantDiagnoses: function (count, topDiagnoses) {
+    var searchRegExp = new RegExp(this.regExpString(), "i");
     var results = [];
     var idx = 0;
     var diagnoses = DiagnosisStore.all();
     while (results.length < count && idx < diagnoses.length) {
       var diagnosis = diagnoses[idx];
-      if (diagnosis[0].search(searchRegExp) >= 0) {
-        var found = false;
-        for (i = 0; i < topDiagnoses.length; i++) {
-          if (topDiagnoses[i][0] === diagnosis[0] && topDiagnoses[i][1] === diagnosis[1]) {
-            found = true;
-          }
-        }
-        if (!found) {
+      if (diagnosis[0].search(searchRegExp) >= 0 && !(this.inArray(diagnosis, topDiagnoses))) {
           results.push(diagnosis);
-        }
       }
       idx += 1;
     }
     return results;
   },
 
-  _regExpString: function () {
+  inArray: function (diagnosis, topDiagnoses) {
+    var found = false;
+    for (i = 0; i < topDiagnoses.length; i++) {
+      if (topDiagnoses[i][0] === diagnosis[0] && topDiagnoses[i][1] === diagnosis[1]) {
+        found = true;
+      }
+    }
+    return found;
+  },
+
+  regExpString: function () {
     var regExpString = "";
     var queryWords = this.state.query.split(/[ -]/);
     if (queryWords[queryWords.length - 1] === "") {
@@ -98,15 +100,15 @@ window.SearchableDiagnosesIndex = React.createClass({
     queryWords.forEach(function(searchWord, idx) {
       var lowerCaseWord = searchWord.toLowerCase();
       if (idx === queryWords.length - 1) {
-        regExpString += this._beginningWordRegExpString(lowerCaseWord);
+        regExpString += this.beginningWordRegExpString(lowerCaseWord);
       } else {
-        regExpString += this._fullWordRegExpString(lowerCaseWord);
+        regExpString += this.fullWordRegExpString(lowerCaseWord);
       }
     }.bind(this));
     return regExpString;
   },
 
-  _fullWordRegExpString: function (word) {
+  fullWordRegExpString: function (word) {
     wordRegExpString = "(?=.*(\\b|\\s|^)" + this.escapeRegExp(word) + "(\\b|\\s|$)";
     if (COMMON_ABBREVS[word]) {
       wordRegExpString += "|.*(\\b|\\s|^)" + this.escapeRegExp(COMMON_ABBREVS[word]) + "(\\b|\\s|$)";
@@ -114,7 +116,7 @@ window.SearchableDiagnosesIndex = React.createClass({
     return wordRegExpString + ")";
   },
 
-  _beginningWordRegExpString: function (word) {
+  beginningWordRegExpString: function (word) {
     wordRegExpString = "(?=.*(\\b|\\s|^)" + this.escapeRegExp(word);
     if (COMMON_ABBREVS[word]) {
       wordRegExpString += "|.*(\\b|\\s|^)" + this.escapeRegExp(COMMON_ABBREVS[word]);

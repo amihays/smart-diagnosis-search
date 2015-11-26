@@ -14,11 +14,11 @@ class Diagnosis < ActiveRecord::Base
   has_many :diagnosis_selections
   has_many :queries, through: :diagnosis_selections, source: :query
 
-  def self.most_selected(query)
+  def self.most_selected(query, limit)
     Diagnosis.joins(diagnosis_selections: :query)
              .where("queries.text LIKE ?", query + "%")
              .group("diagnoses.id")
              .order("count(*) desc")
-             .limit(5)
+             .limit(limit)
   end
 end
